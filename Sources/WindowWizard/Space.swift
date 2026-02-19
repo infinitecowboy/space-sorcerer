@@ -3,7 +3,7 @@ import Foundation
 struct Space {
     let displayID: String
     let spaceID: Int
-    var spaceName: String
+    let spaceName: String
     let spaceIndex: Int       // 1-based global index
     let isCurrentSpace: Bool
     let isFullScreen: Bool

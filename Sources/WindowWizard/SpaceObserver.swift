@@ -10,15 +10,12 @@ final class SpaceObserver {
 
     private var spaceNames: [Int: String] {
         get {
-            UserDefaults.standard.dictionary(forKey: "SpaceNames") as? [Int: String]
-                ?? (UserDefaults.standard.dictionary(forKey: "SpaceNames") as? [String: String])
-                    .map { dict in
-                        var result: [Int: String] = [:]
-                        for (k, v) in dict {
-                            if let intKey = Int(k) { result[intKey] = v }
-                        }
-                        return result
-                    } ?? [:]
+            let dict = UserDefaults.standard.dictionary(forKey: "SpaceNames") as? [String: String] ?? [:]
+            var result: [Int: String] = [:]
+            for (k, v) in dict {
+                if let intKey = Int(k) { result[intKey] = v }
+            }
+            return result
         }
         set {
             let stringKeyed = Dictionary(uniqueKeysWithValues: newValue.map { (String($0.key), $0.value) })
