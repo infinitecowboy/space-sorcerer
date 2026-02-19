@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleIdentifier</key>
-    <string>com.windowwizard.app</string>
+    <string>com.spacesorcerer.app</string>
     <key>CFBundleName</key>
-    <string>Window Wizard</string>
+    <string>Space Sorcerer</string>
     <key>CFBundleDisplayName</key>
-    <string>Window Wizard</string>
+    <string>Space Sorcerer</string>
     <key>CFBundleExecutable</key>
-    <string>WindowWizard</string>
+    <string>SpaceSorcerer</string>
     <key>CFBundleVersion</key>
     <string>1.0</string>
     <key>CFBundleShortVersionString</key>

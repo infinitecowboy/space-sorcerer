@@ -30,10 +30,23 @@ final class SpaceObserver {
             name: NSWorkspace.activeSpaceDidChangeNotification,
             object: nil
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(spaceDidChange),
+            name: NSApplication.didChangeScreenParametersNotification,
+            object: nil
+        )
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self,
+            selector: #selector(spaceDidChange),
+            name: NSWorkspace.didWakeNotification,
+            object: nil
+        )
     }
 
     deinit {
         NSWorkspace.shared.notificationCenter.removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     @objc private func spaceDidChange(_ notification: Notification) {

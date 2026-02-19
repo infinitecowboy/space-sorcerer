@@ -27,6 +27,7 @@ final class SpaceRenderer {
     // MARK: - Dots
 
     private func renderDots(spaces: [Space]) -> NSImage {
+        guard !spaces.isEmpty else { return placeholderImage() }
         let dotSize: CGFloat = 6
         let spacing: CGFloat = 5
         let totalWidth = CGFloat(spaces.count) * dotSize + CGFloat(max(0, spaces.count - 1)) * spacing
@@ -58,6 +59,7 @@ final class SpaceRenderer {
     // MARK: - Named
 
     private func renderNamed(spaces: [Space]) -> NSImage {
+        guard !spaces.isEmpty else { return placeholderImage() }
         let font = berkeleyMono(size: fontSize)
         let spacing: CGFloat = 6
         let pillPadH: CGFloat = 6
@@ -122,6 +124,18 @@ final class SpaceRenderer {
         }
         // Not a template — we draw explicit colors for pill + text
         image.isTemplate = false
+        return image
+    }
+
+    private func placeholderImage() -> NSImage {
+        let size = NSSize(width: 8, height: 18)
+        let image = NSImage(size: size, flipped: false) { rect in
+            NSColor.black.set()
+            let dot = NSRect(x: 1, y: 6, width: 6, height: 6)
+            NSBezierPath(ovalIn: dot).fill()
+            return true
+        }
+        image.isTemplate = true
         return image
     }
 

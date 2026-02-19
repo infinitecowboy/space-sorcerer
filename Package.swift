@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "WindowWizard",
+    name: "SpaceSorcerer",
     platforms: [.macOS(.v13)],
     targets: [
         .target(
@@ -18,9 +18,9 @@ let package = Package(
             ]
         ),
         .executableTarget(
-            name: "WindowWizard",
+            name: "SpaceSorcerer",
             dependencies: ["CGSBridge"],
-            path: "Sources/WindowWizard",
+            path: "Sources/SpaceSorcerer",
             linkerSettings: [
                 .linkedFramework("AppKit"),
                 .unsafeFlags([

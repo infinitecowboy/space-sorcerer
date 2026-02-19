@@ -32,7 +32,7 @@ final class PreferencesWindowController {
             backing: .buffered,
             defer: false
         )
-        win.title = "Window Wizard Preferences"
+        win.title = "Space Sorcerer Preferences"
         win.contentView = hostingView
         win.center()
         win.isReleasedWhenClosed = false

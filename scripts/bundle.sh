@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-APP_NAME="WindowWizard"
+APP_NAME="SpaceSorcerer"
 APP_BUNDLE="$PROJECT_DIR/.build/release/${APP_NAME}.app"
 
 echo "Building release binary…"
