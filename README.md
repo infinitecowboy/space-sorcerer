@@ -25,9 +25,16 @@ swift build
 
 The app runs as a menu bar icon with no Dock presence.
 
+To create a standalone `.app` bundle:
+
+```
+./scripts/bundle.sh
+open .build/release/SpaceSorcerer.app
+```
+
 ## How It Works
 
-Space Sorcerer queries macOS desktop spaces using private CoreGraphics APIs (`CGSCopyManagedDisplaySpaces`, `CGSGetActiveSpace`) re-exported through Apple's SkyLight framework. It listens for `activeSpaceDidChangeNotification` to update the indicator in real time.
+Space Sorcerer queries macOS desktop spaces using private CoreGraphics APIs (`CGSCopyManagedDisplaySpaces`, `CGSGetActiveSpace`) re-exported through Apple's SkyLight framework. It listens for `activeSpaceDidChangeNotification`, `didChangeScreenParametersNotification`, and `didWakeNotification` to keep the indicator accurate across space switches, display changes, and sleep/wake cycles.
 
 ## Project Structure
 
