@@ -36,6 +36,17 @@ open .build/release/SpaceSorcerer.app
 
 Space Sorcerer queries macOS desktop spaces using private CoreGraphics APIs (`CGSCopyManagedDisplaySpaces`, `CGSGetActiveSpace`) re-exported through Apple's SkyLight framework. It listens for `activeSpaceDidChangeNotification`, `didChangeScreenParametersNotification`, and `didWakeNotification` to keep the indicator accurate across space switches, display changes, and sleep/wake cycles.
 
+## Screenshots
+
+![Named mode](images/space-sorcerer-named.png)
+*Named mode with custom space labels*
+
+![Dropdown menu](images/space-sorcerer-menu.png)
+*Dropdown menu with space list and quick actions*
+
+![Preferences](images/space-sorcerer-preferences.png)
+*Preferences panel for display style and space naming*
+
 ## Project Structure
 
 ```
