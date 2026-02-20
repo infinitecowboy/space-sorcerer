@@ -38,6 +38,9 @@ Space Sorcerer queries macOS desktop spaces using private CoreGraphics APIs (`CG
 
 ## Screenshots
 
+https://github.com/user-attachments/assets/880dcff6-8fe2-422f-ae07-3f339acee048
+
+
 ![Named mode](images/space-sorcerer-named.png)
 *Named mode with custom space labels*
 
