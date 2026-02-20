@@ -10,6 +10,8 @@ A lightweight macOS menu bar app that shows your desktop spaces at a glance.
 - **Adjustable font size** — 8–24pt slider for the named display
 - **Fullscreen detection** — marks fullscreen spaces with (FS)
 - **Multi-display aware** — tracks spaces across all connected displays
+- **Hide from Dock** — toggle Dock icon visibility at runtime (hidden by default)
+- **Start at Login** — optionally launch automatically on login via SMAppService
 
 ## Requirements
 
@@ -23,7 +25,7 @@ swift build
 .build/debug/SpaceSorcerer
 ```
 
-The app runs as a menu bar icon with no Dock presence.
+The app runs as a menu bar icon with no Dock presence by default. You can toggle Dock visibility and auto-launch in Preferences > General.
 
 To create a standalone `.app` bundle:
 
