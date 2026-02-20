@@ -17,6 +17,11 @@ mkdir -p "$APP_BUNDLE/Contents/Resources"
 
 cp ".build/release/$APP_NAME" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 cp "Resources/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
+cp "Resources/AppIcon.icns" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
+
+echo "Installing to /Applications…"
+cp -R "$APP_BUNDLE" "/Applications/${APP_NAME}.app"
 
 echo "Done! App bundle at: $APP_BUNDLE"
-echo "Run with: open $APP_BUNDLE"
+echo "Installed to: /Applications/${APP_NAME}.app"
+echo "Run with: open /Applications/${APP_NAME}.app"
