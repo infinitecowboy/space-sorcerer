@@ -1,4 +1,5 @@
 import AppKit
+import ServiceManagement
 import SwiftUI
 
 final class PreferencesWindowController {
@@ -27,7 +28,7 @@ final class PreferencesWindowController {
         let hostingView = NSHostingView(rootView: view)
 
         let win = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 420, height: 340),
+            contentRect: NSRect(x: 0, y: 0, width: 420, height: 420),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -55,9 +56,35 @@ struct PreferencesView: View {
     @State private var editingName: String = ""
     @State private var displayStyle: DisplayStyle = .dots
     @State private var fontSize: CGFloat = 13
+    @State private var hideFromDock: Bool = UserDefaults.standard.object(forKey: "HideFromDock") as? Bool ?? true
+    @State private var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            // General
+            GroupBox("General") {
+                VStack(alignment: .leading, spacing: 8) {
+                    Toggle("Hide from Dock", isOn: $hideFromDock)
+                        .onChange(of: hideFromDock) { newValue in
+                            UserDefaults.standard.set(newValue, forKey: "HideFromDock")
+                            NSApp.setActivationPolicy(newValue ? .accessory : .regular)
+                        }
+                    Toggle("Start at Login", isOn: $launchAtLogin)
+                        .onChange(of: launchAtLogin) { newValue in
+                            do {
+                                if newValue {
+                                    try SMAppService.mainApp.register()
+                                } else {
+                                    try SMAppService.mainApp.unregister()
+                                }
+                            } catch {
+                                launchAtLogin = !newValue
+                            }
+                        }
+                }
+                .padding(4)
+            }
+
             // Display Style
             GroupBox("Display Style") {
                 VStack(alignment: .leading, spacing: 8) {
@@ -129,7 +156,7 @@ struct PreferencesView: View {
             Spacer()
         }
         .padding()
-        .frame(width: 420, height: 340)
+        .frame(width: 420, height: 420)
         .onAppear {
             spaces = spaceObserver.querySpaces()
             displayStyle = renderer.displayStyle

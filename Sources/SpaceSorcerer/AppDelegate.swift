@@ -10,7 +10,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SpaceObserverDelegate 
     )
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
+        let hideFromDock = UserDefaults.standard.object(forKey: "HideFromDock") as? Bool ?? true
+        NSApp.setActivationPolicy(hideFromDock ? .accessory : .regular)
 
         spaceObserver.delegate = self
 
