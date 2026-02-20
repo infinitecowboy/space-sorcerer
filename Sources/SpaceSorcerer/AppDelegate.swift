@@ -25,7 +25,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, SpaceObserverDelegate 
             self?.spaceObserver.refresh()
         }
 
-        spaceObserver.refresh()
+        // Defer initial refresh to the next run loop pass so the status bar
+        // has fully materialised — setting the image during didFinishLaunching
+        // can silently fail to render on some macOS versions.
+        DispatchQueue.main.async { [weak self] in
+            self?.spaceObserver.refresh()
+        }
     }
 
     // MARK: - SpaceObserverDelegate
