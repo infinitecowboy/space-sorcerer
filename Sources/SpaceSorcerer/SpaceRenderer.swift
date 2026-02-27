@@ -1,5 +1,10 @@
 import AppKit
 
+enum DisplayMode: String {
+    case auto = "auto"
+    case manual = "manual"
+}
+
 final class SpaceRenderer {
     var displayStyle: DisplayStyle {
         get {
@@ -10,15 +15,35 @@ final class SpaceRenderer {
         }
     }
 
+    var displayMode: DisplayMode {
+        get {
+            DisplayMode(rawValue: UserDefaults.standard.string(forKey: "DisplayMode") ?? "manual") ?? .manual
+        }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: "DisplayMode")
+        }
+    }
+
     var fontSize: CGFloat {
         get { CGFloat(UserDefaults.standard.float(forKey: "FontSize").clamped(to: 8...24, default: 13)) }
         set { UserDefaults.standard.set(Float(newValue), forKey: "FontSize") }
     }
 
+    var effectiveDisplayStyle: DisplayStyle {
+        guard displayMode == .auto else { return displayStyle }
+        switch DisplayDetector.classifyMenuBarDisplay() {
+        case .compact: return .dots
+        case .medium: return .abbreviated
+        case .large: return .named
+        }
+    }
+
     func render(spaces: [Space]) -> NSImage {
-        switch displayStyle {
+        switch effectiveDisplayStyle {
         case .dots:
             return renderDots(spaces: spaces)
+        case .abbreviated:
+            return renderAbbreviated(spaces: spaces)
         case .named:
             return renderNamed(spaces: spaces)
         }
@@ -53,6 +78,71 @@ final class SpaceRenderer {
             return true
         }
         image.isTemplate = true
+        return image
+    }
+
+    // MARK: - Abbreviated
+
+    private func renderAbbreviated(spaces: [Space]) -> NSImage {
+        guard !spaces.isEmpty else { return placeholderImage() }
+        let font = berkeleyMono(size: fontSize)
+        let spacing: CGFloat = 6
+        let pillPadH: CGFloat = 4
+        let pillPadV: CGFloat = 2
+        let cornerRadius: CGFloat = 4
+
+        struct LabelInfo {
+            let text: String
+            let size: NSSize
+            let isCurrent: Bool
+        }
+
+        let labels: [LabelInfo] = spaces.map { space in
+            let text = String(space.spaceName.prefix(1))
+            let attrs: [NSAttributedString.Key: Any] = [.font: font]
+            let size = (text as NSString).size(withAttributes: attrs)
+            return LabelInfo(text: text, size: size, isCurrent: space.isCurrentSpace)
+        }
+
+        let height: CGFloat = max(18, labels.map { $0.size.height }.max().map { $0 + pillPadV * 2 } ?? 18)
+        var totalWidth: CGFloat = 0
+        for (i, label) in labels.enumerated() {
+            totalWidth += label.size.width + pillPadH * 2
+            if i < labels.count - 1 { totalWidth += spacing }
+        }
+
+        let image = NSImage(size: NSSize(width: ceil(totalWidth), height: height), flipped: false) { rect in
+            var x: CGFloat = 0
+
+            for label in labels {
+                let labelWidth = label.size.width + pillPadH * 2
+                let textY = (rect.height - label.size.height) / 2
+
+                if label.isCurrent {
+                    let pillRect = NSRect(x: x, y: (rect.height - label.size.height - pillPadV * 2) / 2,
+                                          width: labelWidth, height: label.size.height + pillPadV * 2)
+                    let pill = NSBezierPath(roundedRect: pillRect, xRadius: cornerRadius, yRadius: cornerRadius)
+                    NSColor.white.withAlphaComponent(0.9).setFill()
+                    pill.fill()
+
+                    let attrs: [NSAttributedString.Key: Any] = [
+                        .font: font,
+                        .foregroundColor: NSColor.black.withAlphaComponent(0.85),
+                    ]
+                    (label.text as NSString).draw(at: NSPoint(x: x + pillPadH, y: textY), withAttributes: attrs)
+                } else {
+                    let attrs: [NSAttributedString.Key: Any] = [
+                        .font: font,
+                        .foregroundColor: NSColor.white.withAlphaComponent(0.5),
+                    ]
+                    (label.text as NSString).draw(at: NSPoint(x: x + pillPadH, y: textY), withAttributes: attrs)
+                }
+
+                x += labelWidth + spacing
+            }
+            return true
+        }
+        image.isTemplate = false
         return image
     }
 

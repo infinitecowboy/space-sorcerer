@@ -54,8 +54,10 @@ struct PreferencesView: View {
     @State private var spaces: [Space] = []
     @State private var selectedSpaceID: Int?
     @State private var editingName: String = ""
+    @State private var displayMode: DisplayMode = .manual
     @State private var displayStyle: DisplayStyle = .dots
     @State private var fontSize: CGFloat = 13
+    @State private var sizeClassOverride: DisplaySizeClass?
     @State private var hideFromDock: Bool = UserDefaults.standard.object(forKey: "HideFromDock") as? Bool ?? true
     @State private var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled
 
@@ -88,12 +90,65 @@ struct PreferencesView: View {
             // Display Style
             GroupBox("Display Style") {
                 VStack(alignment: .leading, spacing: 8) {
+                    Picker("Mode", selection: $displayMode) {
+                        Text("Auto").tag(DisplayMode.auto)
+                        Text("Manual").tag(DisplayMode.manual)
+                    }
+                    .pickerStyle(.segmented)
+                    .onChange(of: displayMode) { newValue in
+                        renderer.displayMode = newValue
+                        onSettingsChanged()
+                    }
+
+                    if displayMode == .auto {
+                        Text("Automatically switches based on display size")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        HStack {
+                            Text("Simulate")
+                                .font(.caption)
+                            Picker("", selection: Binding(
+                                get: { sizeClassOverride ?? .compact },
+                                set: { sizeClassOverride = $0 }
+                            )) {
+                                ForEach(DisplaySizeClass.allCases) { sc in
+                                    Text(sc.label).tag(sc)
+                                }
+                            }
+                            .labelsHidden()
+                            .frame(maxWidth: 200)
+
+                            Toggle("", isOn: Binding(
+                                get: { sizeClassOverride != nil },
+                                set: { enabled in
+                                    if enabled {
+                                        sizeClassOverride = .compact
+                                        DisplayDetector.override = .compact
+                                    } else {
+                                        sizeClassOverride = nil
+                                        DisplayDetector.override = nil
+                                    }
+                                    onSettingsChanged()
+                                }
+                            ))
+                            .labelsHidden()
+                            .toggleStyle(.switch)
+                        }
+                        .onChange(of: sizeClassOverride) { newValue in
+                            DisplayDetector.override = newValue
+                            onSettingsChanged()
+                        }
+                    }
+
                     Picker("Style", selection: $displayStyle) {
                         ForEach(DisplayStyle.allCases) { style in
                             Text(style.label).tag(style)
                         }
                     }
                     .pickerStyle(.segmented)
+                    .disabled(displayMode == .auto)
+                    .opacity(displayMode == .auto ? 0.5 : 1)
                     .onChange(of: displayStyle) { newValue in
                         renderer.displayStyle = newValue
                         onSettingsChanged()
@@ -159,8 +214,10 @@ struct PreferencesView: View {
         .frame(width: 420, height: 420)
         .onAppear {
             spaces = spaceObserver.querySpaces()
+            displayMode = renderer.displayMode
             displayStyle = renderer.displayStyle
             fontSize = renderer.fontSize
+            sizeClassOverride = DisplayDetector.override
             if let first = spaces.first {
                 selectedSpaceID = first.spaceID
                 editingName = first.spaceName

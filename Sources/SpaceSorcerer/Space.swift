@@ -11,6 +11,7 @@ struct Space {
 
 enum DisplayStyle: String, CaseIterable, Identifiable {
     case dots = "dots"
+    case abbreviated = "abbreviated"
     case named = "named"
 
     var id: String { rawValue }
@@ -18,6 +19,7 @@ enum DisplayStyle: String, CaseIterable, Identifiable {
     var label: String {
         switch self {
         case .dots: return "Dots"
+        case .abbreviated: return "Abbreviated"
         case .named: return "Named"
         }
     }
