@@ -6,6 +6,8 @@ A lightweight macOS menu bar app that shows your desktop spaces at a glance.
 
 - **Dot indicator** — filled circle for the current space, outlines for the rest
 - **Named mode** — pill-shaped labels with custom space names
+- **Abbreviated mode** — single-letter pill labels (ZEN → Z, DEV → D) for tighter menu bars
+- **Auto display mode** — automatically switches style based on primary display size (compact → dots, medium → abbreviated, large → named)
 - **Custom naming** — rename any space from Preferences
 - **Adjustable font size** — 8–24pt slider for the named display
 - **Fullscreen detection** — marks fullscreen spaces with (FS)
@@ -61,7 +63,8 @@ Sources/
     main.swift         App entry point
     AppDelegate.swift  Wires observer, renderer, and status bar
     SpaceObserver.swift  Queries and monitors spaces
-    SpaceRenderer.swift  Renders dot or named indicators
+    SpaceRenderer.swift  Renders dot, abbreviated, or named indicators
+    DisplayDetector.swift  Classifies primary display size for auto mode
     StatusBarController.swift  Menu bar item and dropdown
     PreferencesWindow.swift    SwiftUI preferences panel
     Space.swift        Data models
